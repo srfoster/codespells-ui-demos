@@ -1,0 +1,1 @@
+("7.7" racket ("dd4534bef3d215f744b197286067a15615af1ad9" . "95870e8f0db70d4599e50040f8405caf31850cdd") #"C:\\Users\\ThoughtSTEM\\Desktop\\codespells-ui-demos\\blockly.rkt" #"C:\\Users\\ThoughtSTEM\\Desktop\\codespells-ui-demos\\hello-world.rkt" (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))

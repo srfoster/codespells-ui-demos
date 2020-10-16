@@ -1,0 +1,29 @@
+#lang at-exp racket
+(provide hello-world)
+
+(require "./util.rkt")
+
+(define (hello-world)
+  (define (fancy-rune)
+    (enclose
+     (div
+      (svg-rune-description
+       (rune-background
+        #:color "red"
+        (rune-image
+         (circle 40 'solid 'green)))))
+     (script ()
+             (function (makePreview s)
+                       @js{console.log("Preview", @s)}))))
+
+  (define (fancy-editor)
+    (enclose
+     (div "HI")
+     (script ()
+             (function (onShow)
+                       @js{console.log("Show")})
+             (function (compile)
+                       @js{console.log("Compile"); return "COMPILED..."}))))
+
+                                      (test-modal-editor-rune-widget
+                                       (fancy-rune) (fancy-editor)))

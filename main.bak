@@ -1,0 +1,9 @@
+#lang racket
+
+(require codespells-server)
+
+(define my-lang (basic-lang))
+
+(with ([current-editor-lang my-lang])
+      (codespells-server-start))
+

@@ -1,0 +1,158 @@
+#lang at-exp racket
+(provide litegraph
+         litegraph-rune
+         litegraph-editor)
+
+#|
+  Just a proof of concept.  Full of stuff that needs to be ironed out.
+  1) Right click should bring up context menu with just Atom, Grouper, and Watch
+  2) The Watch node can be made unnecessary (need to find in the graph Groupers with no outputs)
+  3) Should sort Groupers with no outputs according to position before compiling
+  4) Groupers should allow for adding/removing input ports (start at 2 by default)
+  5) No need for the search bar (on dbl click)
+  6) Make canvas resizable (fixed width/height atm)
+  *) Etc.
+
+  But good enough to shoot a demo
+|#
+
+(require "./util.rkt" racket/runtime-path)
+
+(define-runtime-path litegraph.js
+  "./litegraph/litegraph.min.js")
+
+(define (litegraph)
+  (test-modal-editor-rune-widget
+   (list
+    (litegraph-rune) (litegraph-editor))))
+
+(define (litegraph-rune)
+  (enclose
+   (div
+    (div id: (id "empty")
+         (svg-rune-description
+          (rune-background
+           #:color "red"
+           (rune-image
+            (rectangle 40 20 'solid 'black)))))
+    (div id: (id "full")
+         style: (properties display:"none")
+         (svg-rune-description
+          (rune-background
+           #:color "red"
+           (rune-image
+            (rectangle 40 20 'solid 'pink))))))
+   (script ()
+           (function (makePreview s)
+                     @js{
+ console.log(s)
+ $(@(~j "#NAMESPACE_empty")).hide()
+ $(@(~j "#NAMESPACE_full")).show()
+ }))))
+
+(define (litegraph-editor)
+  (enclose
+   (div
+    (link href: "https://tamats.com/projects/litegraph/css/litegraph.css"
+          'rel: "stylesheet" type: "text/css")
+    (style/inline
+     ".litesearchbox{z-index: 10000}
+        .litecontextmenu{z-index: 10000 !important}")
+    (canvas id: (id "mycanvas")
+            width: 100
+            height: 720
+            style: "border: 1px solid"))
+   (script ([construct (call 'constructor)])
+           (function (constructor)
+                     @js{
+ @(file->string litegraph.js)
+
+ //node constructor class
+ function MyAtomNode()
+ {
+  this.addProperty("value", "");
+  this.widget = this.addWidget("text","","","value");  //link to property value
+  this.widgets_up = true;
+  
+  this.addOutput("","string");
+ }
+
+ //name to show
+ MyAtomNode.title = "Atom";
+
+ //function to call when the node is executed
+ MyAtomNode.prototype.onExecute = function()
+ {
+  this.setOutputData( 0,  this.properties["value"] );
+ }
+                            
+
+ //node constructor class
+ function MyGrouperNode()
+ {
+  this.addProperty("value", "");
+  this.widget = this.addWidget("text","","","value");  //link to property value
+  this.widgets_up = true;
+  
+  this.addInput("","string");
+  this.addInput("","string");
+  this.addInput("","string");
+  this.addInput("","string");
+  this.addInput("","string");
+  this.addOutput("","string");
+ }
+
+ //name to show
+ MyGrouperNode.title = "Grouper";
+
+ //function to call when the node is executed
+ MyGrouperNode.prototype.onExecute = function()
+ {
+  var A = this.getInputData(0);
+  if( A === undefined )
+  A = "";
+  var B = this.getInputData(1);
+  if( B === undefined )
+  B = "";
+  var C = this.getInputData(2);
+  if( C === undefined )
+  C = "";
+  var D = this.getInputData(3);
+  if( D === undefined )
+  D = "";
+  var E = this.getInputData(4);
+  if( E === undefined )
+  E = "";
+
+  this.setOutputData( 0,
+  "("+ this.properties["value"]+ " " + A + " " + B + " " + C + " " + D + " " + E + ")" );
+ }
+
+ //register in the system
+ LiteGraph.registerNodeType("basic/grouper",  MyGrouperNode );
+ LiteGraph.registerNodeType("basic/atom",     MyAtomNode );
+                            
+ var graph = new LGraph();
+ window[@(~j "NAMESPACE_graph")] = graph
+ //var canvas = new LGraphCanvas(@(~j "#NAMESPACE_mycanvas"), graph);
+
+
+ //graph.start()
+ })
+                       
+           (function (onShow)
+                     @js{
+ var graph = window[@(~j "NAMESPACE_graph")]
+ var canvas = $(@(~j "#NAMESPACE_mycanvas"))
+ canvas.attr({width: canvas.parent().width()})
+                           
+ new LGraphCanvas(@(~j "#NAMESPACE_mycanvas"), graph);
+
+ graph.start() //start in constructor?  is restarting bad?
+}
+                     )
+           (function (compile)
+                     @js{return window[@(~j "NAMESPACE_graph")]._nodes.filter((n)=>n.title=="Watch")[0].value}))))
+
+(module+ main
+  (litegraph))
