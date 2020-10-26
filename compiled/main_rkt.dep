@@ -1,1 +1,0 @@
-("7.7" racket ("1d9fbe22b605b6c5bf3b51a85b53ddb217781589" . "04668567ccee5b62f92ad86a5d0cae8a0ce9fd2b") (collects #"codespells-ui-demos" #"3d.rkt") (collects #"codespells-ui-demos" #"blockly.rkt") (collects #"codespells-ui-demos" #"hello-world.rkt") (collects #"codespells-ui-demos" #"litegraph.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))

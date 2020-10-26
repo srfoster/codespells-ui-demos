@@ -1,1 +1,0 @@
-("7.7" racket ("0c4ff06017ac63a9dbcd8cb87ff9bf3e72ab280b" . "4dd536f935036e7ed1b5523d49d4bab38288dd96") (collects #"at-exp" #"lang" #"reader.rkt") (collects #"codespells-ui-demos" #"util.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"racket" #"runtime-path.rkt"))
